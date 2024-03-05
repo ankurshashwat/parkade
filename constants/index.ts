@@ -8,18 +8,22 @@ export const themes: ThemeOption[] = [
 
 export const mobileNavbar: MobileNavbar[] = [
   {
+    imgURL: "/assets/icons/home.svg",
     route: "/",
     label: "Home",
   },
   {
+    imgURL: "/assets/icons/location.svg",
     route: "/rent-parking",
     label: "Rent a parking space",
   },
   {
+    imgURL: "/assets/icons/tag.svg",
     route: "/list-parking",
     label: "List your parking space",
   },
   {
+    imgURL: "/assets/icons/user.svg",
     route: "/profile",
     label: "Profile",
   },

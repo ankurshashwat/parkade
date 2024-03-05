@@ -32,6 +32,13 @@ const Content = () => {
                   : "text-dark300_light900"
               } flex items-center justify-start gap-4 bg-transparent p-4`}
             >
+              <Image
+                src={link.imgURL}
+                alt={link.label}
+                width={20}
+                height={20}
+                className={`${isActive ? "" : "invert-colors"}`}
+              />
               <p className={`${isActive ? "base-bold" : "base-medium"}`}>
                 {link.label}
               </p>

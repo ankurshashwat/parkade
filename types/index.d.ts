@@ -5,6 +5,7 @@ export interface ThemeOption {
 }
 
 export interface MobileNavbar {
+  imgURL: string;
   route: string;
   label: string;
 }
