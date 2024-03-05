@@ -1,4 +1,4 @@
-// import { ThemeProvider } from "@/context/ThemeProvider";
+import { ThemeProvider } from "@/context/ThemeProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -28,8 +28,8 @@ export default function RootLayout({
               footerActionLink: "primary-text-gradient hover:text-primary-500",
             },
           }}
-        >{children}
-          {/* <ThemeProvider>{children}</ThemeProvider> */}
+        >
+          <ThemeProvider>{children}</ThemeProvider>
         </ClerkProvider>
       </body>
     </html>
