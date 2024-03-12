@@ -15,12 +15,12 @@ export const mobileNavbar: MobileNavbar[] = [
   {
     imgURL: "/assets/icons/location.svg",
     route: "/rent-parking",
-    label: "Rent a parking space",
+    label: "Rent parking",
   },
   {
     imgURL: "/assets/icons/tag.svg",
     route: "/list-parking",
-    label: "List your parking space",
+    label: "List parking",
   },
   {
     imgURL: "/assets/icons/user.svg",
