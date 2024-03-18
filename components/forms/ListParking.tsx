@@ -29,6 +29,7 @@ import { createListing, updateListing } from "@/lib/actions/listing.action";
 import { listingSchema } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import Map, { MapProps } from "../Map";
+import { uploadImagesToS3 } from "@/lib/s3";
 
 interface Props {
   type: string;
@@ -40,6 +41,8 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
   // const router = useRouter();
   // const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  // eslint-disable-next-line no-unused-vars
+  const [images, setImages] = useState<FileList | null>(null);
   // eslint-disable-next-line no-unused-vars
   const [address, setAddress] = useState<{ lat: number; lng: number } | null>(
     null
@@ -65,7 +68,7 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
         },
       },
       images: parsedListingDetails?.images || [],
-      amount: parsedListingDetails?.amount || 0,
+      amount: parsedListingDetails?.amount || 100,
       availability: {
         startDate: parsedListingDetails?.availability?.startDate || new Date(),
         endDate:
@@ -81,6 +84,10 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
       if (type === "Edit") {
         await updateListing({ ...values, _id: parsedListingDetails?._id });
       } else {
+        if (images) {
+          const imageUrls = await uploadImagesToS3(images);
+          values.images = Array.isArray(imageUrls) ? imageUrls : [imageUrls];
+        }
         await createListing(values);
       }
     } catch (error) {
