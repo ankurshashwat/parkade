@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-// import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -38,7 +38,7 @@ interface Props {
 }
 
 const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
-  // const router = useRouter();
+  const router = useRouter();
   // const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // eslint-disable-next-line no-unused-vars
@@ -62,9 +62,9 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
       location: {
         address: parsedListingDetails?.location?.address || "",
         coordinates: {
-          latitude: parsedListingDetails?.location?.coordinates?.latitude || 0,
+          latitude: parsedListingDetails?.location?.coordinates?.latitude || 0.00,
           longitude:
-            parsedListingDetails?.location?.coordinates?.longitude || 0,
+            parsedListingDetails?.location?.coordinates?.longitude || 0.00,
         },
       },
       images: parsedListingDetails?.images || [],
@@ -79,16 +79,54 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
   });
 
   async function onSubmit(values: z.infer<typeof listingSchema>) {
+    console.table(values);
     setIsSubmitting(true);
+  
     try {
       if (type === "Edit") {
-        await updateListing({ ...values, _id: parsedListingDetails?._id });
+        await updateListing({
+          listingId: parsedListingDetails._id,
+          ownerId: parsedListingDetails.ownerId,
+          location: {
+            address: parsedListingDetails.location.address,
+            coordinates: {
+              latitude: parsedListingDetails.location.coordinates.latitude,
+              longitude: parsedListingDetails.location.coordinates.longitude,
+            },
+          },
+          images: values.images,
+          amount: values.amount,
+          availability: {
+            startDate: values.availability.startDate,
+            endDate: values.availability.endDate,
+          },
+        });
+      
+        router.push(`/listing/${parsedListingDetails?._id}`);
       } else {
         if (images) {
           const imageUrls = await uploadImagesToS3(images);
           values.images = Array.isArray(imageUrls) ? imageUrls : [imageUrls];
         }
-        await createListing(values);
+  
+        await createListing({
+          ownerId: mongoUserId,
+          location: {
+            address: values.location.address,
+            coordinates: {
+              latitude: values.location.coordinates.latitude,
+              longitude: values.location.coordinates.longitude,
+            },
+          },
+          images: values.images,
+          amount: values.amount,
+          availability: {
+            startDate: values.availability.startDate,
+            endDate: values.availability.endDate,
+          },
+          averageRating: 0,
+        });
+        router.push("/"); 
       }
     } catch (error) {
       console.error(error);
@@ -300,6 +338,7 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                     multiple
                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border border-dashed p-4"
                     {...field}
+                    value={field.value || []}
                   />
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
