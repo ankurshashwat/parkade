@@ -11,29 +11,24 @@ export async function createListing(params: any) {
       params;
 
     const newListing = await Listing.create({
-      owner: ownerId,
+      ownerId,
       location,
       images,
       amount,
       availability,
       averageRating,
     });
-
+    console.log(newListing);
     return newListing._id;
   } catch (error) {
     console.log("error creating listing", error);
   }
 }
 
-export async function updateListing(params:any) {
-    try {
-        connectToDatabase();
-
-        
-
-    } catch (error) {
-        console.log('Error updating listing', error);
-    }
-
-    
+export async function updateListing(params: any) {
+  try {
+    connectToDatabase();
+  } catch (error) {
+    console.log("Error updating listing", error);
+  }
 }

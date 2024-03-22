@@ -30,10 +30,11 @@ import { listingSchema } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import Map, { MapProps } from "../Map";
 import { uploadImagesToS3 } from "@/lib/s3";
+import { ObjectId } from "mongoose";
 
 interface Props {
   type: string;
-  mongoUserId: string;
+  mongoUserId: ObjectId;
   listingDetails?: string;
 }
 
@@ -62,9 +63,9 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
       location: {
         address: parsedListingDetails?.location?.address || "",
         coordinates: {
-          latitude: parsedListingDetails?.location?.coordinates?.latitude || 0.00,
+          latitude: parsedListingDetails?.location?.coordinates?.latitude || 0,
           longitude:
-            parsedListingDetails?.location?.coordinates?.longitude || 0.00,
+            parsedListingDetails?.location?.coordinates?.longitude || 0,
         },
       },
       images: parsedListingDetails?.images || [],
@@ -81,7 +82,7 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
   async function onSubmit(values: z.infer<typeof listingSchema>) {
     console.table(values);
     setIsSubmitting(true);
-  
+
     try {
       if (type === "Edit") {
         await updateListing({
@@ -101,14 +102,14 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
             endDate: values.availability.endDate,
           },
         });
-      
+
         router.push(`/listing/${parsedListingDetails?._id}`);
       } else {
         if (images) {
           const imageUrls = await uploadImagesToS3(images);
           values.images = Array.isArray(imageUrls) ? imageUrls : [imageUrls];
         }
-  
+
         await createListing({
           ownerId: mongoUserId,
           location: {
@@ -126,7 +127,7 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
           },
           averageRating: 0,
         });
-        router.push("/"); 
+        router.push("/");
       }
     } catch (error) {
       console.error(error);
@@ -158,7 +159,8 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                   />
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
-                  Specific address of your parking space.
+                  Specific address of your parking space. Search for your
+                  location.
                 </FormDescription>
                 <FormMessage className="text-red-500" />
               </FormItem>
@@ -174,12 +176,14 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                 </FormLabel>
                 <FormControl className="mt-3.5">
                   <Input
+                    disabled={true}
                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                     {...field}
                   />
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
-                  Latitude coordinates of your parking space.
+                  Latitude coordinates of your parking space. Search for your
+                  location.
                 </FormDescription>
                 <FormMessage className="text-red-500" />
               </FormItem>
@@ -195,12 +199,14 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                 </FormLabel>
                 <FormControl className="mt-3.5">
                   <Input
+                    disabled={true}
                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                     {...field}
                   />
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
-                  Longitude coordinates of your parking space.
+                  Longitude coordinates of your parking space. Search for your
+                  location.
                 </FormDescription>
                 <FormMessage className="text-red-500" />
               </FormItem>

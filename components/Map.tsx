@@ -12,7 +12,7 @@ import { Input } from "./ui/input";
 import Image from "next/image";
 
 export interface MapProps {
-  updateAddress: (address: { lat: number; lng: number }) => void;
+  updateAddress: (location: { address: string; lat: number; lng: number }) => void;
 }
 
 const containerStyle = {
@@ -24,7 +24,7 @@ const containerStyle = {
 const libraries: Libraries = ["places"];
 
 const Map = ({ updateAddress }: MapProps) => {
-  const [marker, setMarker] = useState<{ lat: number; lng: number } | null>(
+  const [marker, setMarker] = useState<{ address: string; lat: number; lng: number } | null>(
     null
   );
   // eslint-disable-next-line no-undef
@@ -58,7 +58,8 @@ const Map = ({ updateAddress }: MapProps) => {
       return;
     }
 
-    const newMarker: { lat: number; lng: number } = {
+    const newMarker: { address: string; lat: number; lng: number } = {
+      address: place.formatted_address!,
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
     };
@@ -73,6 +74,7 @@ const Map = ({ updateAddress }: MapProps) => {
 
   const onMapClick = (event : any) => {
     const newMarker = {
+      address: event.latLng.toString(),
       lat: event.latLng.lat(),
       lng: event.latLng.lng(),
     };
@@ -101,8 +103,8 @@ const Map = ({ updateAddress }: MapProps) => {
           <div style={{ flex: 1, marginBottom: 16 }}>
             <GoogleMap
               mapContainerStyle={containerStyle}
-              center={marker || { lat: 20.5937, lng: 78.9629 }} 
-              zoom={5} 
+              center={marker || { lat: 25.3176, lng: 82.9739 }} 
+              zoom={12} 
               onLoad={onMapLoad}
               onClick={onMapClick}
               options={{ styles: darkMapStyle }}
