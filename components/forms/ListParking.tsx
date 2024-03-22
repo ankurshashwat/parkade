@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import Map, { MapProps } from "../Map";
 import { uploadImagesToS3 } from "@/lib/s3";
 import { ObjectId } from "mongoose";
+import Image from "next/image";
 
 interface Props {
   type: string;
@@ -315,12 +316,20 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                   Amount <span className="text-primary-500">*</span>
                 </FormLabel>
                 <FormControl className="mt-3.5">
-                  <Input
-                    type="number"
-                    step="any"
-                    className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
-                    {...field}
-                  />
+                  <div className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 flex min-h-[56px] flex-row items-center justify-around rounded-md border pl-4">
+                    <Image
+                      src="/assets/icons/rupee.svg"
+                      alt="rupee"
+                      width={16}
+                      height={16}
+                    />
+                    <Input
+                      type="number"
+                      step="any"
+                      className="no-focus placeholder text-dark400_light700 border-none bg-transparent shadow-none outline-none"
+                      {...field}
+                    />
+                  </div>
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
                   Specify the rental amount for your parking spot.
