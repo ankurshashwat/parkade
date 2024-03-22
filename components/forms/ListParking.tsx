@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-// import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -29,17 +29,22 @@ import { createListing, updateListing } from "@/lib/actions/listing.action";
 import { listingSchema } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import Map, { MapProps } from "../Map";
+import { uploadImagesToS3 } from "@/lib/s3";
+import { ObjectId } from "mongoose";
+import Image from "next/image";
 
 interface Props {
   type: string;
-  mongoUserId: string;
+  mongoUserId: ObjectId;
   listingDetails?: string;
 }
 
 const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
-  // const router = useRouter();
+  const router = useRouter();
   // const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  // eslint-disable-next-line no-unused-vars
+  const [images, setImages] = useState<FileList | null>(null);
   // eslint-disable-next-line no-unused-vars
   const [address, setAddress] = useState<{ lat: number; lng: number } | null>(
     null
@@ -65,7 +70,7 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
         },
       },
       images: parsedListingDetails?.images || [],
-      amount: parsedListingDetails?.amount || 0,
+      amount: parsedListingDetails?.amount || 100,
       availability: {
         startDate: parsedListingDetails?.availability?.startDate || new Date(),
         endDate:
@@ -76,12 +81,54 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
   });
 
   async function onSubmit(values: z.infer<typeof listingSchema>) {
+    console.table(values);
     setIsSubmitting(true);
+
     try {
       if (type === "Edit") {
-        await updateListing({ ...values, _id: parsedListingDetails?._id });
+        await updateListing({
+          listingId: parsedListingDetails._id,
+          ownerId: parsedListingDetails.ownerId,
+          location: {
+            address: parsedListingDetails.location.address,
+            coordinates: {
+              latitude: parsedListingDetails.location.coordinates.latitude,
+              longitude: parsedListingDetails.location.coordinates.longitude,
+            },
+          },
+          images: values.images,
+          amount: values.amount,
+          availability: {
+            startDate: values.availability.startDate,
+            endDate: values.availability.endDate,
+          },
+        });
+
+        router.push(`/listing/${parsedListingDetails?._id}`);
       } else {
-        await createListing(values);
+        if (images) {
+          const imageUrls = await uploadImagesToS3(images);
+          values.images = Array.isArray(imageUrls) ? imageUrls : [imageUrls];
+        }
+
+        await createListing({
+          ownerId: mongoUserId,
+          location: {
+            address: values.location.address,
+            coordinates: {
+              latitude: values.location.coordinates.latitude,
+              longitude: values.location.coordinates.longitude,
+            },
+          },
+          images: values.images,
+          amount: values.amount,
+          availability: {
+            startDate: values.availability.startDate,
+            endDate: values.availability.endDate,
+          },
+          averageRating: 0,
+        });
+        router.push("/");
       }
     } catch (error) {
       console.error(error);
@@ -113,7 +160,8 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                   />
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
-                  Specific address of your parking space.
+                  Specific address of your parking space. Search for your
+                  location.
                 </FormDescription>
                 <FormMessage className="text-red-500" />
               </FormItem>
@@ -129,12 +177,14 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                 </FormLabel>
                 <FormControl className="mt-3.5">
                   <Input
+                    disabled={true}
                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                     {...field}
                   />
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
-                  Latitude coordinates of your parking space.
+                  Latitude coordinates of your parking space. Search for your
+                  location.
                 </FormDescription>
                 <FormMessage className="text-red-500" />
               </FormItem>
@@ -150,12 +200,14 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                 </FormLabel>
                 <FormControl className="mt-3.5">
                   <Input
+                    disabled={true}
                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                     {...field}
                   />
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
-                  Longitude coordinates of your parking space.
+                  Longitude coordinates of your parking space. Search for your
+                  location.
                 </FormDescription>
                 <FormMessage className="text-red-500" />
               </FormItem>
@@ -264,12 +316,20 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                   Amount <span className="text-primary-500">*</span>
                 </FormLabel>
                 <FormControl className="mt-3.5">
-                  <Input
-                    type="number"
-                    step="any"
-                    className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
-                    {...field}
-                  />
+                  <div className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 flex min-h-[56px] flex-row items-center justify-around rounded-md border pl-4">
+                    <Image
+                      src="/assets/icons/rupee.svg"
+                      alt="rupee"
+                      width={16}
+                      height={16}
+                    />
+                    <Input
+                      type="number"
+                      step="any"
+                      className="no-focus placeholder text-dark400_light700 border-none bg-transparent shadow-none outline-none"
+                      {...field}
+                    />
+                  </div>
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
                   Specify the rental amount for your parking spot.
@@ -293,6 +353,7 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                     multiple
                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border border-dashed p-4"
                     {...field}
+                    value={field.value || []}
                   />
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
