@@ -1,7 +1,7 @@
 import { Schema, models, model, Document } from "mongoose";
 
 export interface ListingInterface extends Document {
-  ownerId: Schema.Types.ObjectId;
+  owner: Schema.Types.ObjectId;
   location: {
     address: string;
     coordinates: {
@@ -15,12 +15,14 @@ export interface ListingInterface extends Document {
     startDate: Date;
     endDate: Date;
   };
-  ratings: Schema.Types.ObjectId[];
-  averageRating: number;
+  reviews: Schema.Types.ObjectId[];
+  upvotes: Schema.Types.ObjectId[];
+  downvotes: Schema.Types.ObjectId[];
+  createdAt: Date;
 }
 
 const ListingSchema = new Schema({
-  ownerId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+  owner: { type: Schema.Types.ObjectId, required: true, ref: "User" },
   location: {
     address: { type: String, required: true },
     coordinates: {
@@ -34,8 +36,10 @@ const ListingSchema = new Schema({
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
   },
-  ratings: [{ type: Schema.Types.ObjectId, ref: "Rating" }],
-  averageRating: { type: Number },
+  reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+  upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  downvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Listing = models.Listing || model("Listing", ListingSchema);

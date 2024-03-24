@@ -1,21 +1,23 @@
 import { Schema, models, model, Document } from "mongoose";
 
-export interface RatingInterface extends Document {
+export interface ReviewInterface extends Document {
   userId: Schema.Types.ObjectId;
   listingId: Schema.Types.ObjectId;
-  rating: number;
+  upvotes: Schema.Types.ObjectId[];
+  downvotes: Schema.Types.ObjectId[];
   review: string;
   createdAt: Date;
 }
 
-const RatingSchema = new Schema({
+const ReviewSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
   listingId: { type: Schema.Types.ObjectId, required: true, ref: "Listing" },
-  rating: { type: Number, required: true }, 
+  upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  downvotes: [{ type: Schema.Types.ObjectId, ref: "User" }], 
   review: { type: String }, 
   createdAt: { type: Date, default: Date.now },
 });
 
-const Rating = models.Rating || model("Rating", RatingSchema);
+const Review = models.Review || model("Review", ReviewSchema);
 
-export default Rating;
+export default Review;
