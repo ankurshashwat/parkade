@@ -4,7 +4,7 @@ import { getUserById } from "@/lib/actions/user.action";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "list your parking space",
+  title: "List Parking - Parkade",
 };
 
 const Page = async () => {

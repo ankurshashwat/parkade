@@ -1,10 +1,10 @@
 "use server";
 
 import User from "@/models/user";
+import Listing from "@/models/listing";
 import { connectToDatabase } from "../mongoose";
 import { CreateUserParams, DeleteUserParams, UpdateUserParams } from "@/types/shared";
 import { revalidatePath } from "next/cache";
-import Listing from "@/models/listing";
 
 export async function getUserById(params: { userId: string }) {
   try {
@@ -62,7 +62,7 @@ export async function deleteUser(params: DeleteUserParams) {
       throw new Error("No user with this ID found.");
     }
     
-    await Listing.deleteMany({ownerId: user._id});
+    await Listing.deleteMany({owner: user._id});
     const deletedUser = await User.findByIdAndDelete(user._id);
 
     return deletedUser;
