@@ -20,7 +20,7 @@ const availabilitySchema = z.object({
 });
 
 export const listingSchema = z.object({
-  ownerId: z.string().optional(),
+  owner: z.string().optional(),
   location: locationSchema,
   images: z.array(z.string().url("Invalid image URL")),
   amount: z.number().positive("Amount must be positive"),

@@ -60,17 +60,17 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
   const form = useForm<z.infer<typeof listingSchema>>({
     resolver: zodResolver(listingSchema),
     defaultValues: {
-      ownerId: parsedListingDetails?.ownerId || mongoUserId,
+      owner: parsedListingDetails?.owner || mongoUserId,
       location: {
         address: parsedListingDetails?.location?.address || "",
         coordinates: {
-          latitude: parsedListingDetails?.location?.coordinates?.latitude || 0,
+          latitude: parsedListingDetails?.location?.coordinates?.latitude || 25.3176,
           longitude:
-            parsedListingDetails?.location?.coordinates?.longitude || 0,
+            parsedListingDetails?.location?.coordinates?.longitude || 82.9739,
         },
       },
       images: parsedListingDetails?.images || [],
-      amount: parsedListingDetails?.amount || 100,
+      amount: parsedListingDetails?.amount || 900,
       availability: {
         startDate: parsedListingDetails?.availability?.startDate || new Date(),
         endDate:
@@ -88,7 +88,7 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
       if (type === "Edit") {
         await updateListing({
           listingId: parsedListingDetails._id,
-          ownerId: parsedListingDetails.ownerId,
+          owner: parsedListingDetails.owner,
           location: {
             address: parsedListingDetails.location.address,
             coordinates: {
@@ -112,7 +112,7 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
         }
 
         await createListing({
-          ownerId: mongoUserId,
+          owner: mongoUserId,
           location: {
             address: values.location.address,
             coordinates: {
@@ -126,7 +126,6 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
             startDate: values.availability.startDate,
             endDate: values.availability.endDate,
           },
-          averageRating: 0,
         });
         router.push("/");
       }
@@ -332,7 +331,7 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
                   </div>
                 </FormControl>
                 <FormDescription className="body-regular mt-2.5 text-light-500">
-                  Specify the rental amount for your parking spot.
+                  Specify the rental amount for your parking spot per day basis.
                 </FormDescription>
                 <FormMessage className="text-red-500" />
               </FormItem>
