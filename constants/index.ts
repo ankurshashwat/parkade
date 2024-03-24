@@ -1,4 +1,4 @@
-import type { MobileNavbar, ThemeOption } from "@/types";
+import type { FilterProps, MobileNavbar, ThemeOption } from "@/types";
 
 export const themes: ThemeOption[] = [
   { value: "light", label: "Light", icon: "/assets/icons/sun.svg" },
@@ -11,6 +11,16 @@ export const mobileNavbar: MobileNavbar[] = [
     imgURL: "/assets/icons/home.svg",
     route: "/",
     label: "Home",
+  },
+  {
+    imgURL: "/assets/icons/star.svg",
+    route: "/favorites",
+    label: "Favorites",
+  },
+  {
+    imgURL: "/assets/icons/clock.svg",
+    route: "/bookings",
+    label: "Bookings",
   },
   {
     imgURL: "/assets/icons/location.svg",
@@ -27,4 +37,9 @@ export const mobileNavbar: MobileNavbar[] = [
     route: "/profile",
     label: "Profile",
   },
+];
+
+export const ListingFilters: FilterProps[] = [
+  { name: "Recent", value: "recent" },
+  { name: "Review", value: "reviews" },
 ];
