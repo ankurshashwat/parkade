@@ -26,3 +26,7 @@ export const listingSchema = z.object({
   amount: z.number().positive("Amount must be positive"),
   availability: availabilitySchema,
 });
+
+export const ReviewSchema = z.object({
+  review: z.string().min(10),
+});
