@@ -21,6 +21,33 @@ interface ListingId {
   listingId: string;
 }
 
+interface OptionalPage {
+  page?: number;
+}
+
+interface OptionalPageSize {
+  pageSize?: number;
+}
+
+interface OptionalSearch {
+  searchQuery?: string;
+}
+
+interface OptionalFilter {
+  filter?: string;
+}
+
+interface Voting {
+  hasupVoted: boolean;
+  hasdownVoted: boolean;
+}
+
+interface Searchable
+  extends OptionalPage,
+    OptionalPageSize,
+    OptionalSearch,
+    OptionalFilter {}
+
 /* interfaces for user actions */
 
 export interface CreateUserParams extends ClerkId {
@@ -37,3 +64,17 @@ export interface UpdateUserParams extends ClerkId, Path {
 export interface DeleteUserParams extends ClerkId {}
 
 export interface GetUserByIdParams extends UserId {}
+
+export interface ToggleSaveListingParams extends UserId, ListingId, Path {}
+
+export interface GetSavedListingParams
+  extends ClerkId,
+    OptionalPage,
+    OptionalPageSize,
+    OptionalSearch,
+    OptionalFilter {}
+
+export interface GetUserStatsParams
+  extends UserId,
+    OptionalPage,
+    OptionalPageSize {}
