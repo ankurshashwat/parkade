@@ -28,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { createListing, updateListing } from "@/lib/actions/listing.action";
 import { listingSchema } from "@/lib/validation";
 import { cn } from "@/lib/utils";
-import Map, { MapProps } from "../Map";
+import Map, { MapProps } from "../shared/Map";
 import { uploadImagesToS3 } from "@/lib/s3";
 import { ObjectId } from "mongoose";
 import Image from "next/image";
@@ -64,7 +64,8 @@ const ListParking = ({ type, mongoUserId, listingDetails }: Props) => {
       location: {
         address: parsedListingDetails?.location?.address || "",
         coordinates: {
-          latitude: parsedListingDetails?.location?.coordinates?.latitude || 25.3176,
+          latitude:
+            parsedListingDetails?.location?.coordinates?.latitude || 25.3176,
           longitude:
             parsedListingDetails?.location?.coordinates?.longitude || 82.9739,
         },
