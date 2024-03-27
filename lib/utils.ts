@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const formatDate = (date: Date): string => {
   const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); 
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = String(date.getFullYear()).slice(-2);
   return `${day}/${month}/${year}`;
 };
@@ -39,6 +39,13 @@ export const getTimestamp = (createdAt: Date): string => {
   }
 
   return "Just now";
+};
+
+export const getFormattedNumber = (number: number): string => {
+  if (number < 1000) return number.toString();
+  if (number < 1000000) return `${(number / 1000).toFixed(1)}K`;
+  if (number < 1000000000) return `${(number / 1000000).toFixed(1)}M`;
+  return `${(number / 1000000000).toFixed(1)}B`;
 };
 
 export const getFormattedJoinedDate = (date: Date): string => {

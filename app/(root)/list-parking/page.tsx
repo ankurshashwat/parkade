@@ -21,7 +21,7 @@ const Page = async () => {
       <div className="mt-9">
         <ListParking
           type="create"
-          mongoUserId={mongoUser?._id}
+          mongoUserId={mongoUser._id}
         />
       </div>
     </div>

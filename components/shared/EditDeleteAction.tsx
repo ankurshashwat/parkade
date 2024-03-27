@@ -4,7 +4,8 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
 import { deleteListing } from "@/lib/actions/listing.action";
-// import { deleteRating } from "@/lib/actions/review.action";
+import { deleteReview } from "@/lib/actions/review.action";
+
 
 interface Props {
   type: string;
@@ -17,8 +18,8 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
   const handleEdit = () => {
     if (type === "Listing") {
       router.push(`/listing/edit/${JSON.parse(itemId)}`);
-    } else if (type === "Rating") {
-      router.push(`/edit-rating/${JSON.parse(itemId)}`);
+    } else if (type === "Review") {
+      router.push(`/edit-review/${JSON.parse(itemId)}`);
     }
   };
 
@@ -29,9 +30,9 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
         path: pathname,
         isListingPath: pathname === `/listing/${JSON.parse(itemId)}`,
       });
-    } else if (type === "Rating") {
-      //   await deleteRating({ ratingId: JSON.parse(itemId), path: pathname });
-      console.log("rating deleted");
+    } else if (type === "Review") {
+        await deleteReview({ reviewId: JSON.parse(itemId), path: pathname });
+      console.log("review deleted");
     }
   };
 

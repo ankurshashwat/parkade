@@ -43,3 +43,9 @@ export const ListingFilters: FilterProps[] = [
   { name: "Recent", value: "recent" },
   { name: "Review", value: "reviews" },
 ];
+
+export const ReviewFilters: FilterProps[] = [
+  { name: "Highest Upvotes", value: "highestUpvotes" },
+  { name: "Lowest Upvotes", value: "lowestUpvotes" },
+  { name: "Most Recent", value: "recent" },
+];

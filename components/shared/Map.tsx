@@ -8,7 +8,7 @@ import {
   useLoadScript,
 } from "@react-google-maps/api";
 import { darkMapStyle } from "@/constants/map";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import Image from "next/image";
 
 export interface MapProps {

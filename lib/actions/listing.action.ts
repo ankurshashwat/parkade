@@ -147,3 +147,72 @@ export async function getListingById(params: any) {
     throw error;
   }
 }
+
+export async function upvoteListing(params: any) {
+  try {
+    connectToDatabase();
+
+    // eslint-disable-next-line no-unused-vars
+    const { listingId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasupVoted) {
+      updateQuery = {
+        $pull: { downvotes: userId },
+        $push: { upvotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { upvotes: userId } };
+    }
+
+    const listing = await Listing.findOneAndUpdate(listingId, updateQuery, {
+      new: true,
+    });
+
+    if (!listing) {
+      throw new Error("The listing does not exist.");
+    }
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function downvoteListing(params: any) {
+  try {
+    connectToDatabase();
+
+    // eslint-disable-next-line no-unused-vars
+    const { listingId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasdownVoted) {
+      updateQuery = {
+        $pull: { downvotes: userId },
+      };
+    } else if (hasupVoted) {
+      updateQuery = {
+        $pull: { upvotes: userId },
+        $push: { downvotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { downvotes: userId } };
+    }
+
+    const listing = await Listing.findOneAndUpdate(listingId, updateQuery, {
+      new: true,
+    });
+
+    if (!listing) {
+      throw new Error("The listing does not exist.");
+    }
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
